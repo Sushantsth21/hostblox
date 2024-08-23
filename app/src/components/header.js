@@ -6,7 +6,7 @@ const Header = () => {
     <header className="bg-blue-600 text-white">
       <nav className="container mx-auto flex justify-between items-center p-4">
         <div className="text-lg font-bold">
-          <Link href="/">MyWebsite</Link>
+          <Link href="/">HostBlox</Link>
         </div>
         <ul className="flex space-x-4">
           <li>
@@ -15,13 +15,13 @@ const Header = () => {
             </Link>
           </li>
           <li>
-            <Link href="/about" className="hover:text-gray-300">
-              About
+            <Link href="/host" className="hover:text-gray-300">
+              Host
             </Link>
           </li>
           <li>
-            <Link href="/services" className="hover:text-gray-300">
-              Services
+            <Link href="/trade" className="hover:text-gray-300">
+              Trade
             </Link>
           </li>
           <li>
