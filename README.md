@@ -9,16 +9,19 @@ Hostblox is a dynamic platform tailored for Roblox enthusiasts. Our app simplifi
 ## Features
 
 ### Team Finding
+
 - **Player Search**: Easily find and connect with other Roblox players based on game interests and skills.
 - **Team Matching**: Discover players who are looking for teammates for specific games or activities.
 - **Profiles**: View player profiles to find the best match for your gaming needs.
 
 ### Item Trading
+
 - **Trade Marketplace**: Browse and trade Roblox items with other players.
 - **Secure Transactions**: Engage in trades within a safe and secure environment.
 - **Item Listings**: Post and manage your items for trade, and search for items you need.
 
 ### Community Engagement
+
 - **Groups**: Join or create groups to connect with like-minded players and organize gaming sessions.
 - **Reviews and Ratings**: Leave feedback on trades and team experiences to help others make informed decisions.
 - **Chat and Communication**: Use built-in chat features to communicate with potential teammates and trading partners.
@@ -44,4 +47,5 @@ Thank you for choosing Hostblox! We’re excited to support your Roblox gaming a
 
 Happy gaming!
 
-The Hostblox Team
+The Hostblox Team  
+Team Members: Gaurab Baral, Sushant Shrestha, Mithilesh Sah
