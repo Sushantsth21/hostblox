@@ -2,12 +2,32 @@ import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 import Game from "@/models/Game"; // Adjust this import path if necessary
 
+// Create a connection function
+const connectDB = async () => {
+  if (mongoose.connections[0].readyState) {
+    // If already connected, use current connection
+    return;
+  }
+
+  // Check if MONGODB_URI is defined
+  const uri = process.env.MONGODB_URI;
+  if (!uri) {
+    throw new Error("MONGODB_URI is not defined in the environment variables");
+  }
+
+  try {
+    await mongoose.connect(uri);
+    console.log("Connected to MongoDB");
+  } catch (error) {
+    console.error("MongoDB connection error:", error);
+    throw error;
+  }
+};
+
 export async function POST(request) {
   try {
     // Connect to MongoDB
-    if (!mongoose.connections[0].readyState) {
-      await mongoose.connect(process.env.MONGODB_URI);
-    }
+    await connectDB();
 
     const body = await request.json();
     const { mode, farmers, strat, otherMode } = body.formData;
