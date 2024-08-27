@@ -1,6 +1,8 @@
-import { NextResponse } from "next/server";
+import Game from "@/models/Game";
 import mongoose from "mongoose";
-import Game from "@/models/Game"; // Adjust this import path if necessary
+import { NextResponse } from "next/server";
+
+// Adjust this import path if necessary
 
 // Create a connection function
 const connectDB = async () => {
@@ -30,38 +32,57 @@ export async function POST(request) {
     await connectDB();
 
     const body = await request.json();
-    const { mode, farmers, strat, otherMode } = body.formData;
+    const {
+      mode,
+      players,
+      strategy,
+      strategyName,
+      strategyLink,
+      rounds,
+      robloxUsername,
+    } = body;
 
     // Validate input
     if (!mode) {
       return NextResponse.json({ error: "Mode is required" }, { status: 400 });
     }
 
-    if (mode === "Other" && !otherMode) {
+    if (!players || isNaN(parseInt(players))) {
       return NextResponse.json(
-        { error: "Other mode specification is required" },
+        { error: "Valid number of players is required" },
         { status: 400 }
       );
     }
 
-    if (!farmers || isNaN(parseInt(farmers))) {
-      return NextResponse.json(
-        { error: "Valid number of farmers is required" },
-        { status: 400 }
-      );
-    }
-
-    if (strat !== "Yes" && strat !== "No") {
+    if (typeof strategy !== "boolean") {
       return NextResponse.json(
         { error: "Valid strategy selection is required" },
         { status: 400 }
       );
     }
 
+    if (!rounds || isNaN(parseInt(rounds))) {
+      return NextResponse.json(
+        { error: "Valid number of rounds is required" },
+        { status: 400 }
+      );
+    }
+
+    if (!robloxUsername) {
+      return NextResponse.json(
+        { error: "Roblox username is required" },
+        { status: 400 }
+      );
+    }
+
     const gameData = {
-      mode: mode === "Other" ? otherMode : mode,
-      farmers: parseInt(farmers),
-      strat: strat === "Yes",
+      mode,
+      players: parseInt(players),
+      strategy,
+      strategyName: strategy ? strategyName : undefined,
+      strategyLink: strategy ? strategyLink : undefined,
+      rounds: parseInt(rounds),
+      robloxUsername,
     };
 
     const game = new Game(gameData);
@@ -73,6 +94,24 @@ export async function POST(request) {
     );
   } catch (error) {
     console.error("Error in game submission:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET() {
+  try {
+    // Connect to MongoDB
+    await connectDB();
+
+    // Fetch all games, sorted by creation date (newest first)
+    const games = await Game.find().sort({ createdAt: -1 });
+
+    return NextResponse.json(games);
+  } catch (error) {
+    console.error("Error fetching games:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

@@ -6,12 +6,34 @@ const gameSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    farmers: {
+    players: {
       type: Number,
       required: true,
     },
-    strat: {
+    strategy: {
       type: Boolean,
+      required: true,
+    },
+    strategyName: {
+      type: String,
+      maxlength: 20,
+      required: function () {
+        return this.strategy;
+      },
+    },
+    strategyLink: {
+      type: String,
+      match: /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/,
+      required: function () {
+        return this.strategy;
+      },
+    },
+    rounds: {
+      type: Number,
+      required: true,
+    },
+    robloxUsername: {
+      type: String,
       required: true,
     },
   },

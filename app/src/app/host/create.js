@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 
 const AddItem = () => {
@@ -6,7 +7,11 @@ const AddItem = () => {
     mode: "",
     otherMode: "",
     farmers: "",
+    rounds: "",
+    robloxUsername: "",
     strat: "",
+    strategyName: "",
+    strategyLink: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -41,13 +46,26 @@ const AddItem = () => {
       return;
     }
 
+    // Transform form data to match the expected schema
+    const transformedData = {
+      mode: formData.mode === "Other" ? formData.otherMode : formData.mode,
+      players: parseInt(formData.farmers, 10),
+      strategy: formData.strat === "Yes",
+      strategyName:
+        formData.strat === "Yes" ? formData.strategyName : undefined,
+      strategyLink:
+        formData.strat === "Yes" ? formData.strategyLink : undefined,
+      rounds: parseInt(formData.rounds, 10),
+      robloxUsername: formData.robloxUsername,
+    };
+
     try {
       const response = await fetch("/api/games", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ formData }),
+        body: JSON.stringify(transformedData),
       });
 
       const data = await response.json();
@@ -57,7 +75,16 @@ const AddItem = () => {
       }
 
       alert(data.message);
-      setFormData({ mode: "", otherMode: "", farmers: "", strat: "" });
+      setFormData({
+        mode: "",
+        otherMode: "",
+        farmers: "",
+        rounds: "",
+        robloxUsername: "",
+        strat: "",
+        strategyName: "",
+        strategyLink: "",
+      });
     } catch (error) {
       console.error("Error submitting game setup: ", error);
       setError(
@@ -77,16 +104,19 @@ const AddItem = () => {
           </h2>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
+          <div className="rounded-md shadow-sm space-y-4">
             <div>
-              <label htmlFor="mode" className="sr-only">
+              <label
+                htmlFor="mode"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Mode
               </label>
               <select
                 id="mode"
                 name="mode"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 value={formData.mode}
                 onChange={handleChange}
               >
@@ -98,53 +128,13 @@ const AddItem = () => {
                 ))}
               </select>
             </div>
-            {formData.mode && (
-              <>
-                <div>
-                  <label htmlFor="farmers" className="sr-only">
-                    Number of Farmers
-                  </label>
-                  <select
-                    id="farmers"
-                    name="farmers"
-                    required
-                    className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                    value={formData.farmers}
-                    onChange={handleChange}
-                  >
-                    <option value="">Select Number of Farmers</option>
-                    {(formData.mode === "Hardcore Mode"
-                      ? [1, 2, 3]
-                      : [1, 2, 3, 4]
-                    ).map((num) => (
-                      <option key={num} value={num}>
-                        {num}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label htmlFor="strat" className="sr-only">
-                    Following a Strategy?
-                  </label>
-                  <select
-                    id="strat"
-                    name="strat"
-                    required
-                    className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                    value={formData.strat}
-                    onChange={handleChange}
-                  >
-                    <option value="">Are you following any strat?</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                  </select>
-                </div>
-              </>
-            )}
+
             {formData.mode === "Other" && (
               <div>
-                <label htmlFor="otherMode" className="sr-only">
+                <label
+                  htmlFor="otherMode"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Specify Other Mode
                 </label>
                 <input
@@ -152,13 +142,135 @@ const AddItem = () => {
                   name="otherMode"
                   type="text"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                  placeholder="Specify Other Mode (max 20 chars)"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   maxLength="20"
                   value={formData.otherMode}
                   onChange={handleChange}
                 />
               </div>
+            )}
+
+            <div>
+              <label
+                htmlFor="farmers"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Number of Farmers
+              </label>
+              <select
+                id="farmers"
+                name="farmers"
+                required
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                value={formData.farmers}
+                onChange={handleChange}
+              >
+                <option value="">Select Number of Farmers</option>
+                {(formData.mode === "Hardcore Mode"
+                  ? [1, 2, 3]
+                  : [1, 2, 3, 4]
+                ).map((num) => (
+                  <option key={num} value={num}>
+                    {num}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label
+                htmlFor="rounds"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Number of Rounds
+              </label>
+              <input
+                id="rounds"
+                name="rounds"
+                type="number"
+                required
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                value={formData.rounds}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="robloxUsername"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Roblox Username
+              </label>
+              <input
+                id="robloxUsername"
+                name="robloxUsername"
+                type="text"
+                required
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                value={formData.robloxUsername}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="strat"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Following a Strategy?
+              </label>
+              <select
+                id="strat"
+                name="strat"
+                required
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                value={formData.strat}
+                onChange={handleChange}
+              >
+                <option value="">Are you following any strat?</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+
+            {formData.strat === "Yes" && (
+              <>
+                <div>
+                  <label
+                    htmlFor="strategyName"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Strategy Name
+                  </label>
+                  <input
+                    id="strategyName"
+                    name="strategyName"
+                    type="text"
+                    maxLength="20"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    value={formData.strategyName}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="strategyLink"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Strategy Link
+                  </label>
+                  <input
+                    id="strategyLink"
+                    name="strategyLink"
+                    type="url"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    value={formData.strategyLink}
+                    onChange={handleChange}
+                  />
+                </div>
+              </>
             )}
           </div>
 
